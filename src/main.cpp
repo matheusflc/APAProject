@@ -9,7 +9,7 @@ int main(){
     InstanceReader reader;
     guloso.printar();
 
-    if(reader.readInstance("instancias_projeto/teste.txt")){
+    if(reader.readInstance("instancias_projeto/n5m15A.txt")){
         reader.printInstance();
     }
 
