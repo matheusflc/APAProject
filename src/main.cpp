@@ -9,9 +9,11 @@ int main(){
     InstanceReader reader;
     guloso.printar();
 
-    if(reader.readInstance("instancias_projeto/n60m10A.txt")){
+    if(reader.readInstance("instancias_projeto/teste.txt")){
         reader.printInstance();
     }
+
+    guloso.play(&reader);
 
 
     return 0;

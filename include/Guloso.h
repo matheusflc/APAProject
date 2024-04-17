@@ -1,6 +1,7 @@
 #ifndef GULOSO_H
 #define GULOSO_H
 
+#include "InstanceReader.h"
 
 using namespace std;
 
@@ -11,9 +12,12 @@ class Guloso{
 
     public:
         Guloso();
-        void printar();
+        
         ~Guloso();
 
+        void printar();
+
+        void play(InstanceReader* reader);
 
 
 };
