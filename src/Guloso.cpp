@@ -11,6 +11,14 @@ void Guloso::printar(){
     cout << "Guloso" << endl;
 }
 
+void Guloso::setCustoTotal(int custoTotal){
+    this->custoTotal = custoTotal;
+}
+
+int Guloso::getCustoTotal(){
+    return this->custoTotal;
+}
+
 void Guloso::play(InstanceReader *reader){
    // Atributos extraídos do leitor de instâncias
     int n = reader->n; // Número de jobs
@@ -21,7 +29,6 @@ void Guloso::play(InstanceReader *reader){
 
     // Estrutura para armazenar a alocação de jobs aos servidores
     vector<vector<int>> alocacao(m);
-    int custoTotal = 0;
     int custoAlocacao = 0;
     int custoLocal = 0;
 

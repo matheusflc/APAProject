@@ -9,6 +9,7 @@ using namespace std;
 
 class Guloso{
     private:
+        int custoTotal;
 
     public:
         Guloso();
@@ -18,6 +19,10 @@ class Guloso{
         void printar();
 
         void play(InstanceReader* reader);
+
+        void setCustoTotal(int custoTotal);
+
+        int getCustoTotal();
 
 
 };
