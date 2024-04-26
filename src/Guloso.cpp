@@ -88,7 +88,7 @@ void Guloso::play(InstanceReader *reader){
 }
 
 
-vector<vector<int>>& Guloso::getAlocacao(){
+vector<vector<int>> Guloso::getAlocacao(){
     return this->alocacao;
 }
 

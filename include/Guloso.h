@@ -10,7 +10,7 @@ using namespace std;
 class Guloso{
     private:
         int custoTotal;
-        vector<vector<int>> alocacao;
+        
 
     public:
         Guloso();
@@ -27,7 +27,9 @@ class Guloso{
 
         int getCustoTotal();
 
-        vector<vector<int>>& getAlocacao();
+        vector<vector<int>> getAlocacao();
+
+        vector<vector<int>> alocacao;
 
 
 
