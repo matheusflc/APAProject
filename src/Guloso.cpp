@@ -29,6 +29,8 @@ void Guloso::play(InstanceReader *reader){
 
     // Estrutura para armazenar a alocação de jobs aos servidores
     vector<vector<int>> alocacao(m);
+    
+    
     int custoAlocacao = 0;
     int custoLocal = 0;
 
@@ -48,7 +50,7 @@ void Guloso::play(InstanceReader *reader){
 
     // Ordena os jobs pelo menor tempo de processamento
     sort(jobs.begin(), jobs.end());
-
+    
     // Alocação dos jobs com base no menor tempo de processamento
     for (auto& job : jobs) {
         int tempoMinimo = job.first;
@@ -66,6 +68,8 @@ void Guloso::play(InstanceReader *reader){
         }
     }
 
+   
+
     custoTotal = custoAlocacao + custoLocal;
 
     // Saída dos resultados
@@ -80,4 +84,14 @@ void Guloso::play(InstanceReader *reader){
         }
         cout << endl;
     }
+    setAlocacao(alocacao);
+}
+
+
+vector<vector<int>>& Guloso::getAlocacao(){
+    return this->alocacao;
+}
+
+void Guloso::setAlocacao(vector<vector<int>> alocacao){
+    this->alocacao = alocacao;
 }

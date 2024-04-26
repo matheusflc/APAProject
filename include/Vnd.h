@@ -2,18 +2,19 @@
 #define VND_H
 
 #include "Guloso.h"
+#include "InstanceReader.h"
 
 class Vnd
 {
     private:
-        void swap();
+        void VNDswap(Guloso* guloso, vector<vector<int>>& custo, vector<vector<int>>& alocacao);
         
         
     public:
         Vnd();
         ~Vnd();
 
-        void Run(Guloso* Guloso);
+        void Run(Guloso* Guloso, InstanceReader* InstanceReader);
 
 
 
