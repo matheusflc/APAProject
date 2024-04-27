@@ -141,8 +141,12 @@ int Guloso::getCustoLocal(){
     return this->custoLocal;
 }
 
-void Guloso::setCapSv(vector<int> CapSv){
-    this->CapSv = CapSv;
+void Guloso::setCapSv(int var, int server, int valor){
+    if (var == 1){
+        this->CapSv[server] += valor;
+    }else{
+        this->CapSv[server] = valor;
+    }
 }
 
 vector<int> Guloso::getCapSv(){

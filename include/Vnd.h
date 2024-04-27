@@ -4,6 +4,8 @@
 #include "Guloso.h"
 #include "InstanceReader.h"
 
+using namespace std;
+
 class Vnd
 {
     private:
@@ -13,7 +15,8 @@ class Vnd
 
         bool canSwap(Guloso* guloso, InstanceReader* redaer, int& sv1, int& sv2);
 
-        int calculateImprovement(Guloso* guloso, InstanceReader* instanceReader, int& sv1, int& sv2);
+        int calculateImprovement(Guloso* guloso, InstanceReader* reader, int& sv1, int& sv2,
+                                    int& totalCostAfterSwap_1, int& totalCostAfterSwap_2);
         
         
     public:

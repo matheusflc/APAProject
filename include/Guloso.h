@@ -17,6 +17,7 @@ class Guloso{
 
     public:
         vector<vector<int>> alocacao;
+        
         Guloso();
         
         ~Guloso();
@@ -40,7 +41,7 @@ class Guloso{
         void setAlocacao(vector<vector<int>> alocacao);
         void setCustoTotal(int custoTotal);
         void setCustoLocal(int custoLocal);
-        void setCapSv(vector<int>CapSv);
+        void setCapSv(int var, int server, int valor);
         void setCustoAlocacao(int custoAlocacao);
 
         

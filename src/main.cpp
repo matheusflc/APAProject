@@ -11,7 +11,7 @@ int main(){
     Vnd vnd;
     guloso.printar();
 
-    if(reader.readInstance("instancias_projeto/teste.txt")){
+    if(reader.readInstance("instancias_projeto/n25m5A.txt")){
         reader.printInstance();
     }
 
