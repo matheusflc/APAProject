@@ -2,6 +2,7 @@
 
 using namespace std;
 Guloso::Guloso(){
+    //local = vector<int>();
 }
 
 Guloso::~Guloso(){
@@ -80,12 +81,14 @@ void Guloso::play(InstanceReader *reader){
     for (int s = 0; s < m; ++s) {
         //cout << "< lista de jobs alocados no servidor " << s + 1 << ">" << endl;
         for (int jobId : alocacao[s]) {
-            cout << jobId + 1 << " "; // +1 para ajustar a indexação base-0 para uma apresentação mais intuitiva
+            cout << jobId << " "; // +1 para ajustar a indexação base-0 para uma apresentação mais intuitiva
         }
         cout << endl;
     }
+
     setAlocacao(alocacao);
 }
+
 
 
 vector<vector<int>> Guloso::getAlocacao(){
