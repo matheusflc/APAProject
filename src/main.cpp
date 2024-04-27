@@ -16,7 +16,7 @@ int main(){
     }
 
     guloso.play(&reader);
-
+    cout << "lalalal" << endl;
     vnd.Run(&guloso, &reader);
     
 

@@ -6,9 +6,12 @@ using namespace std;
 
 
 int main(){
-    vector<vector<int>> a;
-    a.resize(20);
-    cout << a.size() << endl;
+    vector<int> a = {1,2,3,4,5};
+
+    a[3] += 10;
+    for(int i = 0; i < a.size(); i++){
+        cout << a[i] << endl;
+    }
 
     return 0;
 }

@@ -7,7 +7,7 @@
 class Vnd
 {
     private:
-        void VNDswap(Guloso* guloso, vector<vector<int>>& custo, vector<vector<int>>& alocacao);
+        void VNDswap(Guloso* guloso, InstanceReader* redaer);
         
         
     public:
