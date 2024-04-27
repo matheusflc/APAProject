@@ -25,6 +25,8 @@ class Guloso{
 
         void play(InstanceReader* reader);
 
+        void recalculateCost(InstanceReader* instanceReader);
+
         
 
         //Getters

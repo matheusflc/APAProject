@@ -93,6 +93,28 @@ void Guloso::play(InstanceReader *reader){
     }
 }
 
+void Guloso::recalculateCost(InstanceReader* instanceReader) {
+    // Reinicia o custo total, custo de alocação e custo local
+    this->custoTotal = 0;
+    this->custoAlocacao = 0;
+    this->custoLocal = 0;
+
+    // Itera por todos os servidores para calcular o custo de alocação
+    for (int s = 0; s < instanceReader->m; ++s) {
+        for (int jobIndex : this->alocacao[s]) {
+            this->custoAlocacao += instanceReader->c[s][jobIndex];
+        }
+    }
+
+    // Assume que o último "servidor" no vetor de alocação representa os jobs processados localmente
+    for (int jobIndex : this->alocacao[instanceReader->m]) {
+        this->custoLocal += instanceReader->p; // Adiciona o custo fixo para cada job processado localmente
+    }
+
+    // Atualiza o custo total
+    this->custoTotal = this->custoAlocacao + this->custoLocal;
+}
+
 
 
 vector<vector<int>> Guloso::getAlocacao(){
