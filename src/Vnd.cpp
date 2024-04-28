@@ -361,8 +361,8 @@ void Vnd::playILS(Guloso* guloso, InstanceReader* reader){
 }
 
 vector<vector<int>> Vnd::ILSPerturbation(Guloso* guloso, InstanceReader* reader) {
-    sleep(1);
-    cout << "Pertubacao feita" << endl;
+    usleep(500);
+    
     int m = reader->m; // Número de servidores
     vector<vector<int>> novaAlocacao = guloso->getAlocacao();
     bool local = false;
@@ -372,6 +372,7 @@ vector<vector<int>> Vnd::ILSPerturbation(Guloso* guloso, InstanceReader* reader)
     int servidor1 = rand() % m;
     int servidor2 = rand() % m;
 
+   
     int novaCapacidadeSv1;
     int novaCapacidadeSv2;
 
@@ -383,6 +384,10 @@ vector<vector<int>> Vnd::ILSPerturbation(Guloso* guloso, InstanceReader* reader)
     while (servidor1 == servidor2) { // Garante que os dois servidores sejam diferentes
         servidor2 = rand() % m;
     }
+
+    cout << "servidor 1: " << servidor1 << endl;
+    cout << "servidor 2: " << servidor2 << endl;
+
     
     
     
@@ -396,15 +401,21 @@ vector<vector<int>> Vnd::ILSPerturbation(Guloso* guloso, InstanceReader* reader)
         int job1 = novaAlocacao[servidor1][jobIndex1];
         int job2 = novaAlocacao[servidor2][jobIndex2];
 
-        
+        cout << "job1: " << job1 << endl;
+        cout << "job2: " << job2 << endl;
 
+        cout << "M: "<< m << endl;
         // Calcula o impacto da troca na capacidade dos servidores
         if(servidor1 != m){
             novaCapacidadeSv1 = guloso->getCapSv()[servidor1] - reader->t[servidor1][job1] + reader->t[servidor1][job2];
+            cout << "capacidadesv1: " << guloso->getCapSv()[servidor1] << endl;
+            cout << "novaCapacidadesv1: " << novaCapacidadeSv1 << endl;
         }
 
         if(servidor2 != m){
             novaCapacidadeSv2 = guloso->getCapSv()[servidor2] - reader->t[servidor2][job2] + reader->t[servidor2][job1];
+            cout << "capacidadesv2: " << guloso->getCapSv()[servidor2] << endl;
+            cout << "novaCapacidadesv1: " << novaCapacidadeSv2 << endl;
         }
 
         
@@ -492,19 +503,20 @@ vector<vector<int>> Vnd::ILSPerturbation(Guloso* guloso, InstanceReader* reader)
         }
     }
 // Saída dos resultados
+    cout << "Pertubacao feita" << endl;
     cout << guloso->getCustoTotal() << endl;
     cout << guloso->getCustoAlocacao() << endl;
     cout << guloso->getCustoLocal() << endl;
     
 
-    for (int s = 0; s <= m; ++s) {
+    for (int s = 0; s <= novaAlocacao.size(); ++s) {
         //cout << "< lista de jobs alocados no servidor " << s + 1 << ">" << endl;
         for (int jobId : novaAlocacao[s]) {
             cout << jobId << " "; // +1 para ajustar a indexação base-0 para uma apresentação mais intuitiva
         }
         cout << endl;
     }
-
+    cout << "aaaaaaaaaaa" << endl;
     return novaAlocacao;
 
 }

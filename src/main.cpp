@@ -29,6 +29,12 @@ int main(){
     }
     
     guloso.escreverResultadoEmArquivo(&guloso, "instancias_projeto/" + nomearquivo + "_Result.txt");
+
+    
+    cout << "Capacidade dos servidores após a execução:" << endl;
+    for(size_t i = 0; i < guloso.getCapSv().size(); ++i) {
+        cout << "Servidor " << i << ": " << guloso.getCapSv()[i] << endl;
+    }
     
     
 
