@@ -13,7 +13,7 @@ int main(){
     Vnd vnd;
     guloso.printar();
     srand(static_cast<unsigned int>(time(NULL)));
-    string nomearquivo = "n25m5A";
+    string nomearquivo = "n60m10A";
 
     if(reader.readInstance("instancias_projeto/" + nomearquivo + ".txt")){
         reader.printInstance();
@@ -28,15 +28,7 @@ int main(){
         nomearquivo = "ILS_" + nomearquivo;
     }
     
-    guloso.escreverResultadoEmArquivo(&guloso, "instancias_projeto/" + nomearquivo + "_Result.txt");
-
-    
-    cout << "Capacidade dos servidores após a execução:" << endl;
-    for(size_t i = 0; i < guloso.getCapSv().size(); ++i) {
-        cout << "Servidor " << i << ": " << guloso.getCapSv()[i] << endl;
-    }
-    
-    
+    guloso.escreverResultadoEmArquivo(&guloso, "resultados/" + nomearquivo + "_Result.txt");
 
 
     return 0;
