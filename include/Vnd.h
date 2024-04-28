@@ -25,6 +25,10 @@ class Vnd
 
         void Run(Guloso* Guloso, InstanceReader* InstanceReader);
 
+        vector<vector<int>> ILSPerturbation(Guloso* guloso, InstanceReader* reader);
+
+        void playILS(Guloso* guloso, InstanceReader* instanceReader);
+
 
 
 };

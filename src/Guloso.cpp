@@ -93,6 +93,8 @@ void Guloso::play(InstanceReader *reader){
     }
 }
 
+
+
 void Guloso::recalculateCost(InstanceReader* instanceReader) {
     // Reinicia o custo total, custo de alocação e custo local
     this->custoTotal = 0;

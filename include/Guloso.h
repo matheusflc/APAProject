@@ -30,6 +30,8 @@ class Guloso{
 
         
 
+        
+
         //Getters
         int getCustoTotal();
         vector<vector<int>> getAlocacao();
