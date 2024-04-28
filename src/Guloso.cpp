@@ -47,6 +47,7 @@ void Guloso::play(InstanceReader *reader){
                 servidorId = s;
             }
         }
+        //cout << servidorId << " = "<< j << endl;
         jobs.push_back({tempoMinimo, {servidorId, j}});
     }
 
@@ -55,6 +56,7 @@ void Guloso::play(InstanceReader *reader){
     
     // Alocação dos jobs com base no menor tempo de processamento
     for (auto& job : jobs) {
+       //cout << job.second.first  << " = " << job.second.second <<endl;
         int tempoMinimo = job.first;
         int servidorId = job.second.first;
         int jobId = job.second.second;
@@ -72,7 +74,6 @@ void Guloso::play(InstanceReader *reader){
         }
     }
 
-   
 
     custoTotal = custoAlocacao + custoLocal;
 

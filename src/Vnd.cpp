@@ -39,7 +39,9 @@ void Vnd::VNDswap(Guloso* guloso, InstanceReader* reader) {
     int melhorDiferenca = guloso->getCustoTotal(); // Inicializa com o máximo para encontrar a menor diferença
     pair<int, int> melhorTrocaServidores; // Guarda os índices dos servidores da melhor troca
     pair<int, int> melhorTrocaJobs; // Guarda os índices dos jobs da melhor troca
+    pair<int, int> melhorJob;  
     int diferencaCusto, custoAntes, custoDepois, custoAlocacao;
+    int cont = 0;
     
     
     // Itera sobre todos os pares possíveis de servidores para a troca
@@ -52,13 +54,13 @@ void Vnd::VNDswap(Guloso* guloso, InstanceReader* reader) {
                     int job2 = guloso->alocacao[servidor2][job2Index];
                     
                     if(servidor2 + 1 != guloso->alocacao.size()){
-                        if(guloso->getCapSv()[servidor1] - reader->t[servidor1][job1] + reader->t[servidor2][job2] > reader->b[servidor1] && 
-                        guloso->getCapSv()[servidor2] - reader->t[servidor2][job2] + reader->t[servidor1][job1] > reader->b[servidor2]){
-                            break;
+                        if((guloso->getCapSv()[servidor1] - reader->t[servidor1][job1]) + reader->t[servidor1][job2] > reader->b[servidor1] || 
+                            (guloso->getCapSv()[servidor2] - reader->t[servidor2][job2]) + reader->t[servidor2][job1] > reader->b[servidor2]){
+                            continue;
                         }
                     }else{
-                        if(guloso->getCapSv()[servidor1] - reader->t[servidor1][job1] + reader->t[servidor1][job2] > reader->b[servidor1]){ 
-                            break;
+                        if((guloso->getCapSv()[servidor1] - reader->t[servidor1][job1]) + reader->t[servidor1][job2] > reader->b[servidor1]){ 
+                            continue;
                         }
                     }
 
@@ -78,12 +80,11 @@ void Vnd::VNDswap(Guloso* guloso, InstanceReader* reader) {
 
                     // Se a troca resultar em uma redução maior do custo total, registra a troca
                     if (diferencaCusto < melhorDiferenca) {
-                        //cout << job1 << endl;
-                        //cout << job2 << endl;
                         custoAlocacao =  diferencaCusto - guloso->getCustoLocal();
                         melhorDiferenca = diferencaCusto;
                         melhorTrocaServidores = {servidor1, servidor2};
                         melhorTrocaJobs = {job1Index, job2Index};
+                        melhorJob = {job1, job2};
                     }
                 }
             }
@@ -93,6 +94,21 @@ void Vnd::VNDswap(Guloso* guloso, InstanceReader* reader) {
     // Se uma melhoria foi encontrada, realiza a melhor troca
     if (melhorDiferenca < guloso->getCustoTotal()) {
 
+        //atualiza o custo de cada servidor 
+        int newCap_1 = guloso->getCapSv()[melhorTrocaServidores.first] - 
+                        reader->t[melhorTrocaServidores.first][melhorJob.first] 
+                        + reader->t[melhorTrocaServidores.first][melhorJob.second];
+        
+        guloso->setCapSv(2, melhorTrocaServidores.first, newCap_1);
+
+        if (melhorTrocaServidores.second + 1 != guloso->getAlocacao().size()){
+            int newCap_2 = guloso->getCapSv()[melhorTrocaServidores.second] - 
+                            reader->t[melhorTrocaServidores.second][melhorJob.second] 
+                            + reader->t[melhorTrocaServidores.second][melhorJob.first];
+        
+            guloso->setCapSv(2, melhorTrocaServidores.second, newCap_2);
+        }
+
         // Realiza a troca
         swap(guloso->alocacao[melhorTrocaServidores.first][melhorTrocaJobs.first], 
                 guloso->alocacao[melhorTrocaServidores.second][melhorTrocaJobs.second]);
@@ -100,29 +116,13 @@ void Vnd::VNDswap(Guloso* guloso, InstanceReader* reader) {
         // Atualiza o custo total no objeto Guloso
         guloso->setCustoTotal(melhorDiferenca);
 
-        // Atualiza o custo de cada servidor
-        int newCap_1 = guloso->getCapSv()[melhorTrocaServidores.first] - 
-                        reader->c[melhorTrocaServidores.first][melhorTrocaJobs.first] 
-                        + reader->c[melhorTrocaServidores.first][melhorTrocaJobs.second];
-
-        guloso->setCapSv(2, melhorTrocaServidores.first, newCap_1);
-        
-        if (melhorTrocaServidores.second + 1 != guloso->getAlocacao().size()){
-            int newCap_2 = guloso->getCapSv()[melhorTrocaServidores.second] - 
-                            reader->c[melhorTrocaServidores.second][melhorTrocaJobs.second] 
-                            + reader->c[melhorTrocaServidores.second][melhorTrocaJobs.first];
-        
-            guloso->setCapSv(2, melhorTrocaServidores.second, newCap_2);
-        }
-
         guloso->setCustoAlocacao(custoAlocacao);
 
         cout << "Melhoria encontrada e troca realizada entre Job " 
              << guloso->alocacao[melhorTrocaServidores.second][melhorTrocaJobs.second] << " no Servidor " << melhorTrocaServidores.first
              << " e Job " << guloso->alocacao[melhorTrocaServidores.first][melhorTrocaJobs.first] << " no Servidor " << melhorTrocaServidores.second 
              << " com custo agora de " << melhorDiferenca << ".\n";
-        
-        
+
         cout << guloso->getCustoTotal() << endl;
         cout << guloso->getCustoAlocacao() << endl;
         cout << guloso->getCustoLocal() << endl;
@@ -134,7 +134,6 @@ void Vnd::VNDswap(Guloso* guloso, InstanceReader* reader) {
             cout << endl;
         }
 
-        
     } else {
         cout << "Nenhuma melhoria encontrada através do método swap." << endl;
     }
@@ -208,6 +207,8 @@ bool Vnd::canSwap(Guloso* guloso, InstanceReader* reader, int& sv1, int& sv2){
     // Calcula a soma dos tempos de processamento dos jobs atualmente alocados em cada servidor
     int timeSv1 = 0;
     int timeSv2 = 0;
+    bool server1CanAccommodate;
+    bool server2CanAccommodate;
 
     if(sv2 + 1 == guloso->getAlocacao().size()){
         if(guloso->getAlocacao()[sv1].size() > 1){
@@ -234,8 +235,17 @@ bool Vnd::canSwap(Guloso* guloso, InstanceReader* reader, int& sv1, int& sv2){
     //cout << "Capacidade Sv2: " << reader->b[sv2] << endl;
 
     // Verifica se a soma dos tempos de processamento dos jobs realocados não excede a capacidade dos servidores
-    bool server1CanAccommodate = timeSv1 <= reader->b[sv1];
-    bool server2CanAccommodate = timeSv2 <= reader->b[sv2];
+    server1CanAccommodate = timeSv1 <= reader->b[sv1];
+
+    if(sv2 + 1 == guloso->getAlocacao().size()){
+        server2CanAccommodate = true;
+    }else{
+        server2CanAccommodate = timeSv2 <= reader->b[sv2];
+    }
+
+    //cout << "tempo_1 " << timeSv1 << endl;
+    //cout << "tempo_2 " << timeSv2 << endl;
+    
 
     return server1CanAccommodate && server2CanAccommodate;
 
