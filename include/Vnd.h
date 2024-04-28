@@ -29,6 +29,8 @@ class Vnd
 
         void playILS(Guloso* guloso, InstanceReader* instanceReader);
 
+        void VNDReInsertion(Guloso* guloso, InstanceReader* reader);
+
 
 
 };

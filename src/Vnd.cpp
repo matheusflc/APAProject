@@ -23,6 +23,8 @@ void Vnd::Run(Guloso* Guloso, InstanceReader* InstanceReader){
             VND2opt(Guloso, InstanceReader);
             /*chamar 2-pot*/
         }else{
+            cout << "Entrou no Re insertion" << endl;
+            VNDReInsertion(Guloso, InstanceReader);
             /*chamar re-insertion*/
         }
         if(Guloso->getCustoTotal() < custotal) {
@@ -80,6 +82,29 @@ void Vnd::VNDswap(Guloso* guloso, InstanceReader* reader) {
 
                     // Se a troca resultar em uma redução maior do custo total, registra a troca
                     if (diferencaCusto < melhorDiferenca) {
+
+                        if(diferencaCusto == 435){
+                            cout << "melhorDiferenca = " << melhorDiferenca << endl; 
+                            cout << "servidor 1 = " << servidor1 << endl;
+                            cout << "servidor 2 = " << servidor2 << endl;
+                            cout << "job 1 = " << job1 << endl;
+                            cout << "job 2 = " << job2 << endl;
+                            cout << "custo 1 = " << reader->c[servidor1][job1] << endl;
+                            cout << "custo 2 = " << reader->c[servidor2][job2] << endl;
+                            cout << "CapsSv 1 = " << guloso->getCapSv()[servidor1] << endl;
+                            cout << "CapsSv 2 = " << guloso->getCapSv()[servidor2] << endl;
+                            cout << "custo trocado 1 = " << reader->c[servidor1][job2] << endl;
+                            cout << "custo trocado 2 = " << reader->c[servidor2][job1] << endl;
+
+                            for (int i = 0; i < reader->m; ++i)
+                            {
+                                for(int custo: reader->c[i]){
+                                    cout << custo << " ";
+                                }
+                                cout << endl;
+                            }
+                            
+                        }
                         custoAlocacao =  diferencaCusto - guloso->getCustoLocal();
                         melhorDiferenca = diferencaCusto;
                         melhorTrocaServidores = {servidor1, servidor2};
@@ -123,6 +148,10 @@ void Vnd::VNDswap(Guloso* guloso, InstanceReader* reader) {
              << " e Job " << guloso->alocacao[melhorTrocaServidores.first][melhorTrocaJobs.first] << " no Servidor " << melhorTrocaServidores.second 
              << " com custo agora de " << melhorDiferenca << ".\n";
 
+        for(int i = 0; i < guloso->getCapSv().size(); ++i){
+            cout << guloso->getCapSv()[i] << endl;
+        }
+
         cout << guloso->getCustoTotal() << endl;
         cout << guloso->getCustoAlocacao() << endl;
         cout << guloso->getCustoLocal() << endl;
@@ -145,6 +174,8 @@ void Vnd::VND2opt(Guloso* guloso, InstanceReader* reader) {
     int bestImprovementLocacao = 0;
     int totalCostAfterSwap_1 = 0, totalCostAfterSwap_2 = 0;
     pair<int, int> bestSwap;
+    int newCap_1 , newCap_2;
+    int newCost = 0;
     
     // Avalia todas as possíveis trocas
     for (int i = 0; i < guloso->getAlocacao().size() - 1; ++i) {
@@ -157,7 +188,7 @@ void Vnd::VND2opt(Guloso* guloso, InstanceReader* reader) {
                 if (improvement < bestImprovement) {
                     bestImprovement = improvement;
                     bestSwap = {i, j};
-                    bestImprovementLocacao = improvement - (guloso->getAlocacao()[i].size() * 1000);
+                    //bestImprovementLocacao = improvement - (guloso->getAlocacao()[i].size() * 1000);
                 }
             }
         }
@@ -168,17 +199,29 @@ void Vnd::VND2opt(Guloso* guloso, InstanceReader* reader) {
         swap(guloso->alocacao[bestSwap.first], guloso->alocacao[bestSwap.second]);
         
         // Atualiza o custo total após a troca
-        //guloso->recalculateCost(reader);
+        int calculeLocal = guloso->getAlocacao().back().size() * 1000;
 
         guloso->setCustoTotal(bestImprovement);
-        guloso->setCustoAlocacao(bestImprovementLocacao);
-        guloso->setCapSv(2,bestSwap.first,totalCostAfterSwap_2);
+        guloso->setCustoAlocacao(bestImprovement - calculeLocal);
+        guloso->setCustoLocal(calculeLocal);
 
-        if (bestSwap.second + 1 == guloso->getAlocacao().size()){
-            int local = guloso->getAlocacao()[bestSwap.second].size() * 1000;
-            guloso->setCustoLocal(local);
+        
+        
+
+        if (bestSwap.second + 1 != guloso->getAlocacao().size()){
+            newCap_1 = guloso->getCapSv()[bestSwap.second];
+            newCap_2 = guloso->getCapSv()[bestSwap.first];
+            guloso->setCapSv(2,bestSwap.first, newCap_1);
+            guloso->setCapSv(2,bestSwap.second, newCap_2);
         }else{
-            guloso->setCapSv(2,bestSwap.second,totalCostAfterSwap_1);
+            for (int Index : guloso->alocacao[bestSwap.first]) {
+                newCost += reader->t[bestSwap.first][Index];
+            }
+            guloso->setCapSv(2,bestSwap.first, newCost);
+        }
+        
+        for(int i = 0; i < guloso->getCapSv().size(); ++i){
+            cout << guloso->getCapSv()[i] << endl;
         }
 
         cout << guloso->getCustoTotal() << endl;
@@ -211,7 +254,7 @@ bool Vnd::canSwap(Guloso* guloso, InstanceReader* reader, int& sv1, int& sv2){
     bool server2CanAccommodate;
 
     if(sv2 + 1 == guloso->getAlocacao().size()){
-        if(guloso->getAlocacao()[sv1].size() > 1){
+        if(guloso->getAlocacao()[sv1].size() > guloso->getAlocacao()[sv2].size()){
             return false;
         }
     }else{
@@ -260,6 +303,8 @@ int Vnd::calculateImprovement(Guloso* guloso, InstanceReader* reader, int& sv1, 
     int localCost_1 = 0;
     int localCost_2 = 0;
     int improvement = 0;
+    int totalCostAfter1 = 0;
+    int totalCostAfter2 = 0;
     //totalCostAfterSwap_1 = 0;
     //totalCostAfterSwap_2 = 0;
 
@@ -273,6 +318,11 @@ int Vnd::calculateImprovement(Guloso* guloso, InstanceReader* reader, int& sv1, 
     // Calcula o custo total se os jobs dos servidores server1 e server2 fossem trocados
     // Primeiro, adiciona o custo dos jobs de server1 se fossem processados em server2
     if(sv2 + 1 != guloso->getAlocacao().size()){
+            
+        for (int jobIndex : guloso->alocacao[sv2]) {
+            totalCostAfter1 += reader->c[sv2][jobIndex];
+        }
+        // Em seguida, adiciona o custo dos jobs de server1 se fossem processados em server2
         for (int jobIndex : guloso->alocacao[sv1]) {
             totalCostAfterSwap_1 += reader->c[sv2][jobIndex];
         }
@@ -285,20 +335,17 @@ int Vnd::calculateImprovement(Guloso* guloso, InstanceReader* reader, int& sv1, 
     for (int jobIndex : guloso->alocacao[sv2]) {
         totalCostAfterSwap_2 += reader->c[sv1][jobIndex];
     }
-    // Para os demais servidores, o custo permanece o mesmo
-    
-    //for (int s = 0; s < reader->m; ++s) {
-      //  if (s != sv1 && s != sv2) {
-        //    for (int jobIndex : guloso->alocacao[s]) {
-          //      totalCostAfterSwap += reader->c[s][jobIndex];
-            //}
-        //}
-    //}
+
+    for (int jobIndex : guloso->alocacao[sv1]) {
+        totalCostAfter1 += reader->c[sv1][jobIndex];
+    }
+  
+
 
     //cout << "Custo antes do opt: " << totalCostBeforeSwap << endl;
     //cout << "Custo depois do opt: " << totalCostAfterSwap << endl;
     if(sv2 + 1 != guloso->getAlocacao().size()){
-        improvement = guloso->getCustoTotal() - guloso->getCapSv()[sv1] - guloso->getCapSv()[sv2]
+        improvement = guloso->getCustoTotal() - totalCostAfter1 - totalCostAfter2
                         + totalCostAfterSwap_1 + totalCostAfterSwap_2;
     }else{
         //cout <<"total " << guloso->getCustoTotal() << endl;
@@ -306,7 +353,7 @@ int Vnd::calculateImprovement(Guloso* guloso, InstanceReader* reader, int& sv1, 
         //cout <<"localcost_2 " << localCost_2 << endl;
         //cout <<"after " << totalCostAfterSwap_2 << endl;
         //cout <<"localCost_1 " << localCost_1 << endl;
-        improvement = guloso->getCustoTotal() - guloso->getCapSv()[sv1] - localCost_2 + totalCostAfterSwap_2
+        improvement = guloso->getCustoTotal() - localCost_2 + totalCostAfterSwap_2
                         + localCost_1;
     }
     
@@ -315,6 +362,89 @@ int Vnd::calculateImprovement(Guloso* guloso, InstanceReader* reader, int& sv1, 
     //int improvement = totalCostBeforeSwap - totalCostAfterSwap;
     return improvement;
 }
+
+void Vnd::VNDReInsertion(Guloso* guloso, InstanceReader* reader){
+    int aux = 0;
+    int job, improvement;
+    int bestImprovement = guloso->getCustoTotal();
+    pair<int, int> bestServidor;
+    pair<int, int> bestJob;
+    int newCap_1, newCap_2;
+
+    while (aux < guloso->getAlocacao().size()){
+        for (int job1Index = 0; job1Index < guloso->getAlocacao()[aux].size(); ++job1Index)
+        {
+            job = guloso->getAlocacao()[aux][job1Index];
+            for (int servidorIndex = 0; servidorIndex < guloso->getAlocacao().size() - 1; ++servidorIndex){
+                if (servidorIndex == aux ){
+                    continue;
+                }else{
+                    if (guloso->getCapSv()[servidorIndex] + reader->t[servidorIndex][job] > reader->b[servidorIndex] ){
+                        continue;
+                    }
+
+                    if (aux + 1 == guloso->getAlocacao().size()){
+                        improvement = (guloso->getCustoTotal() - 1000) + reader->c[servidorIndex][job];
+                    }else{
+                        improvement = (guloso->getCustoTotal() - reader->c[aux][job]) + reader->c[servidorIndex][job];
+                    }
+                    
+                    if (improvement < bestImprovement){
+                        bestImprovement = improvement;
+                        bestServidor = {aux, servidorIndex};
+                        bestJob = {job1Index, job};
+                    }
+
+                }
+            }   
+        }   
+
+        aux++;
+    }
+
+    if(bestImprovement < guloso->getCustoTotal()){
+        guloso->alocacao[bestServidor.first].erase(guloso->alocacao
+                [bestServidor.first].begin() + bestJob.first);
+
+        guloso->alocacao[bestServidor.second].push_back(bestJob.second);
+        
+        int calculeLocal = guloso->getAlocacao().back().size() * 1000;
+        guloso->setCustoTotal(bestImprovement);
+        guloso->setCustoAlocacao(bestImprovement - calculeLocal);
+        guloso->setCustoLocal(calculeLocal);
+
+        newCap_1 = guloso->getCapSv()[bestServidor.second] + reader->t[bestServidor.second][bestJob.second];
+
+        if(bestServidor.first + 1 != guloso->getAlocacao().size()){
+            newCap_2 = guloso->getCapSv()[bestServidor.first] - reader->t[bestServidor.first][bestJob.second];
+            guloso->setCapSv(2,bestServidor.first, newCap_2);
+        }
+
+        guloso->setCapSv(2,bestServidor.second, newCap_1);
+        
+
+        for(int i = 0; i < guloso->getCapSv().size(); ++i){
+            cout << guloso->getCapSv()[i] << endl;
+        }
+        
+
+        cout << guloso->getCustoTotal() << endl;
+        cout << guloso->getCustoAlocacao() << endl;
+        cout << guloso->getCustoLocal() << endl;
+
+        for(int s = 0; s < guloso->alocacao.size(); s++){
+            for(int j = 0; j < guloso->alocacao[s].size(); j++){
+                cout << guloso->alocacao[s][j] << " ";
+            }
+            cout << endl;
+        }
+
+    }else{
+        cout << "Nenhuma melhoria encontrada através do método Re insertion." << endl;
+    }
+}
+
+
 
 void Vnd::playILS(Guloso* guloso, InstanceReader* reader){
     int iteracoes = 15;
