@@ -28,6 +28,8 @@ class Guloso{
 
         void recalculateCost(InstanceReader* instanceReader);
 
+        void escreverResultadoEmArquivo(Guloso* guloso, const string& nomeArquivo);
+
         
 
         

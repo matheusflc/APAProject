@@ -119,6 +119,31 @@ void Guloso::recalculateCost(InstanceReader* instanceReader) {
 }
 
 
+void Guloso::escreverResultadoEmArquivo(Guloso* guloso, const string& nomeArquivo) {
+    ofstream arquivo(nomeArquivo);
+
+    if (!arquivo.is_open()) {
+        cerr << "Erro ao abrir o arquivo para escrita." << endl;
+        return;
+    }
+
+    // Escreve os custos no arquivo
+    arquivo << guloso->custoTotal << endl;
+    arquivo << guloso->custoAlocacao << endl;
+    arquivo << guloso->custoLocal << endl;
+    arquivo << endl; // Linha em branco conforme o formato especificado
+
+    // Escreve a lista de jobs alocados em cada servidor
+    for (size_t i = 0; i < guloso->alocacao.size() - 1; ++i) { // Exclui a última lista, que é para jobs locais
+        for (int job : guloso->alocacao[i]) {
+            arquivo  << job << " ";
+        }
+        arquivo << endl;
+    }
+
+    arquivo.close();
+}
+
 
 vector<vector<int>> Guloso::getAlocacao(){
     return this->alocacao;

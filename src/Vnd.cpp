@@ -361,6 +361,8 @@ void Vnd::playILS(Guloso* guloso, InstanceReader* reader){
 }
 
 vector<vector<int>> Vnd::ILSPerturbation(Guloso* guloso, InstanceReader* reader) {
+    sleep(1);
+    cout << "Pertubacao feita" << endl;
     int m = reader->m; // Número de servidores
     vector<vector<int>> novaAlocacao = guloso->getAlocacao();
     bool local = false;
