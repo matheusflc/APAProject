@@ -9,11 +9,13 @@ Vnd::~Vnd(){
 
 
 void Vnd::Run(Guloso* Guloso, InstanceReader* InstanceReader){
+    //auto t1 = chrono::high_resolution_clock::now();
     int k = 1;
     int custotal = Guloso->getCustoTotal();
 
     while (k <= 3)
     {
+<<<<<<< HEAD
         if (k == 1){
             //cout << "Entrou no Swap" << endl;
             VNDswap(Guloso, InstanceReader);
@@ -21,11 +23,22 @@ void Vnd::Run(Guloso* Guloso, InstanceReader* InstanceReader){
         }else if (k == 2){
             //cout << "Entrou no 2opt" << endl;
             VND2opt(Guloso, InstanceReader);
+=======
+        if (k == 1){ 
+            /*chamar swap*/
+            VDNSwap->VNDswap(Guloso, InstanceReader); 
+        }else if (k == 2){ 
+>>>>>>> 6743d78a9ef0a237280cf43c867eacc6502b1da9
             /*chamar 2-pot*/
+            VDN2opt->VND2opt(Guloso, InstanceReader);
         }else{
+<<<<<<< HEAD
             //cout << "Entrou no Re insertion" << endl;
             VNDReInsertion(Guloso, InstanceReader);
+=======
+>>>>>>> 6743d78a9ef0a237280cf43c867eacc6502b1da9
             /*chamar re-insertion*/
+            VDNRe->VNDReInsertion(Guloso, InstanceReader);
         }
         if(Guloso->getCustoTotal() < custotal) {
             custotal = Guloso->getCustoTotal();
@@ -34,6 +47,7 @@ void Vnd::Run(Guloso* Guloso, InstanceReader* InstanceReader){
             k += 1;
         }
     }
+<<<<<<< HEAD
     
 }
 
@@ -442,9 +456,13 @@ void Vnd::VNDReInsertion(Guloso* guloso, InstanceReader* reader){
     }else{
         //cout << "Nenhuma melhoria encontrada através do método Re insertion." << endl;
     }
+=======
+    //auto t2 = chrono::high_resolution_clock::now();
+    //auto duration = chrono::duration_cast<chrono::nanoseconds>( t2 - t1 ).count();
+
+    //cout << duration << endl;
+>>>>>>> 6743d78a9ef0a237280cf43c867eacc6502b1da9
 }
-
-
 
 void Vnd::playILS(Guloso* guloso, InstanceReader* reader){
     int iteracoes = 5000;
@@ -484,6 +502,7 @@ void Vnd::playILS(Guloso* guloso, InstanceReader* reader){
     }
 
     // Saída dos resultados da melhor solução
+<<<<<<< HEAD
     // cout << guloso->getCustoTotal() << endl;
     // cout << guloso->getCustoAlocacao() << endl;
     // cout << guloso->getCustoLocal() << endl;
@@ -495,13 +514,26 @@ void Vnd::playILS(Guloso* guloso, InstanceReader* reader){
     //     }
     //     cout << endl;
     // }
+=======
+    cout << guloso->getCustoTotal() << endl;
+    cout << guloso->getCustoAlocacao() << endl;
+    cout << guloso->getCustoLocal() << endl;
+
+    for (int s = 0; s <= reader->getM(); ++s) {
+        //cout << "< lista de jobs alocados no servidor " << s + 1 << ">" << endl;
+        for (int jobId : guloso->alocacao[s]) {
+            cout << jobId << " "; // +1 para ajustar a indexação base-0 para uma apresentação mais intuitiva
+        }
+        cout << endl;
+    }
+>>>>>>> 6743d78a9ef0a237280cf43c867eacc6502b1da9
 }
 
 vector<vector<int>> Vnd::ILSPerturbation(Guloso* guloso, InstanceReader* reader) {
     //usleep(500);
     bool pertubacao = false;
     
-    int m = reader->m; // Número de servidores
+    int m = reader->getM(); // Número de servidores
     vector<vector<int>> novaAlocacao = guloso->getAlocacao();
     bool local = false;
     
@@ -538,18 +570,30 @@ vector<vector<int>> Vnd::ILSPerturbation(Guloso* guloso, InstanceReader* reader)
         
         // Calcula o impacto da troca na capacidade dos servidores
         if(servidor1 != m){
+<<<<<<< HEAD
             novaCapacidadeSv1 = guloso->getCapSv()[servidor1] - reader->t[servidor1][job1] + reader->t[servidor1][job2];
             
         }
 
         if(servidor2 != m){
             novaCapacidadeSv2 = guloso->getCapSv()[servidor2] - reader->t[servidor2][job2] + reader->t[servidor2][job1];
+=======
+            novaCapacidadeSv1 = guloso->getCapSv()[servidor1] - reader->getT()[servidor1][job1] + reader->getT()[servidor1][job2];
+            cout << "capacidadesv1: " << guloso->getCapSv()[servidor1] << endl;
+            cout << "novaCapacidadesv1: " << novaCapacidadeSv1 << endl;
+        }
+
+        if(servidor2 != m){
+            novaCapacidadeSv2 = guloso->getCapSv()[servidor2] - reader->getT()[servidor2][job2] + reader->getT()[servidor2][job1];
+            cout << "capacidadesv2: " << guloso->getCapSv()[servidor2] << endl;
+            cout << "novaCapacidadesv1: " << novaCapacidadeSv2 << endl;
+>>>>>>> 6743d78a9ef0a237280cf43c867eacc6502b1da9
         }
 
         
 
         // Verifica se a troca respeita a capacidade dos servidores
-        if (servidor2 == m && novaCapacidadeSv1 <= reader->b[servidor1]) {
+        if (servidor2 == m && novaCapacidadeSv1 <= reader->getB()[servidor1]) {
             
             
             // Realiza o swap
@@ -563,11 +607,11 @@ vector<vector<int>> Vnd::ILSPerturbation(Guloso* guloso, InstanceReader* reader)
             int custoAlocacao = guloso->getCustoAlocacao();
             int custoTotal = guloso->getCustoTotal();
 
-            custoAlocacao -= reader->c[servidor1][job1];
-            custoAlocacao -= reader->c[servidor2][job2];
+            custoAlocacao -= reader->getC()[servidor1][job1];
+            custoAlocacao -= reader->getC()[servidor2][job2];
             // Adiciona o custo dos jobs nas novas posições
-            custoAlocacao += reader->c[servidor1][job2];
-            custoAlocacao += reader->c[servidor2][job1];
+            custoAlocacao += reader->getC()[servidor1][job2];
+            custoAlocacao += reader->getC()[servidor2][job1];
             guloso->setCustoAlocacao(custoAlocacao);
 
             // Não é necessário atualizar custoLocal, pois a perturbação não afeta jobs processados localmente
@@ -575,10 +619,14 @@ vector<vector<int>> Vnd::ILSPerturbation(Guloso* guloso, InstanceReader* reader)
             // Recalcula o custo total após a perturbação
             custoTotal = guloso->getCustoAlocacao() + guloso->getCustoLocal();
             guloso->setCustoTotal(custoTotal);
+<<<<<<< HEAD
             
             pertubacao = true;
 
         }else if(servidor1 == m && novaCapacidadeSv2 <= reader->b[servidor2]){
+=======
+        }else if(servidor1 == m && novaCapacidadeSv2 <= reader->getB()[servidor2]){
+>>>>>>> 6743d78a9ef0a237280cf43c867eacc6502b1da9
             
             
             
@@ -594,11 +642,11 @@ vector<vector<int>> Vnd::ILSPerturbation(Guloso* guloso, InstanceReader* reader)
             int custoAlocacao = guloso->getCustoAlocacao();
             int custoTotal = guloso->getCustoTotal();
 
-            custoAlocacao -= reader->c[servidor1][job1];
-            custoAlocacao -= reader->c[servidor2][job2];
+            custoAlocacao -= reader->getC()[servidor1][job1];
+            custoAlocacao -= reader->getC()[servidor2][job2];
             // Adiciona o custo dos jobs nas novas posições
-            custoAlocacao += reader->c[servidor1][job2];
-            custoAlocacao += reader->c[servidor2][job1];
+            custoAlocacao += reader->getC()[servidor1][job2];
+            custoAlocacao += reader->getC()[servidor2][job1];
             guloso->setCustoAlocacao(custoAlocacao);
 
             // Não é necessário atualizar custoLocal, pois a perturbação não afeta jobs processados localmente
@@ -606,10 +654,14 @@ vector<vector<int>> Vnd::ILSPerturbation(Guloso* guloso, InstanceReader* reader)
             // Recalcula o custo total após a perturbação
             custoTotal = guloso->getCustoAlocacao() + guloso->getCustoLocal();
             guloso->setCustoTotal(custoTotal);
+<<<<<<< HEAD
             
             pertubacao = true;
 
         }else if(!local && novaCapacidadeSv2 <= reader->b[servidor2] && novaCapacidadeSv1 <= reader->b[servidor1]){
+=======
+        }else if(!local && novaCapacidadeSv2 <= reader->getB()[servidor2] && novaCapacidadeSv1 <= reader->getB()[servidor1]){
+>>>>>>> 6743d78a9ef0a237280cf43c867eacc6502b1da9
             
             // Realiza o swap
             swap(novaAlocacao[servidor1][jobIndex1], novaAlocacao[servidor2][jobIndex2]);
@@ -624,11 +676,11 @@ vector<vector<int>> Vnd::ILSPerturbation(Guloso* guloso, InstanceReader* reader)
             int custoAlocacao = guloso->getCustoAlocacao();
             int custoTotal = guloso->getCustoTotal();
 
-            custoAlocacao -= reader->c[servidor1][job1];
-            custoAlocacao -= reader->c[servidor2][job2];
+            custoAlocacao -= reader->getC()[servidor1][job1];
+            custoAlocacao -= reader->getC()[servidor2][job2];
             // Adiciona o custo dos jobs nas novas posições
-            custoAlocacao += reader->c[servidor1][job2];
-            custoAlocacao += reader->c[servidor2][job1];
+            custoAlocacao += reader->getC()[servidor1][job2];
+            custoAlocacao += reader->getC()[servidor2][job1];
             guloso->setCustoAlocacao(custoAlocacao);
 
             // Não é necessário atualizar custoLocal, pois a perturbação não afeta jobs processados localmente

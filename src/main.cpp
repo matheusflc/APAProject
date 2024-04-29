@@ -20,14 +20,13 @@ int main(){
     }
     
     guloso.play(&reader);
-    //cout << "lalalal" << endl;
     vnd.Run(&guloso, &reader);
-    //cout << "lalalal" << endl;
     if(ILSPLAY){
         vnd.playILS(&guloso, &reader);
         nomearquivo = "ILS_" + nomearquivo;
     }
     
+<<<<<<< HEAD
     guloso.escreverResultadoEmArquivo(&guloso, "resultados_instancias/" + nomearquivo + "_Result.txt");
 
     
@@ -37,7 +36,11 @@ int main(){
     }
     
     
+=======
+    guloso.escreverResultadoEmArquivo(&guloso, "resultados/" + nomearquivo + "_Result.txt");
+>>>>>>> 6743d78a9ef0a237280cf43c867eacc6502b1da9
 
 
     return 0;
+
 }

@@ -62,3 +62,27 @@ void InstanceReader::printInstance() {
         cout << endl;
     }
 }
+
+vector<int> InstanceReader::getB(){
+    return this->b;
+}
+
+vector<vector<int>> InstanceReader::getT(){
+    return this->t;
+}
+
+vector<vector<int>> InstanceReader::getC(){
+    return this->c;
+}
+
+int InstanceReader::getN(){
+    return this->n;
+}
+
+int InstanceReader::getM(){
+    return this->m;
+}
+
+int InstanceReader::getP(){
+    return this->p;
+}
