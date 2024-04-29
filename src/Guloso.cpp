@@ -23,7 +23,7 @@ int Guloso::getCustoTotal(){
 
 void Guloso::play(InstanceReader *reader){
    // Atributos extraídos do leitor de instâncias
-    vector<int> capacidades = reader->b; // Capacidade de cada servidor
+    vector<int> capacidades = reader->getB(); // Capacidade de cada servidor
 
     // Estrutura para armazenar a alocação de jobs aos servidores
     vector<vector<int>> alocacao(reader->getM()+1);
@@ -139,5 +139,6 @@ vector<int> Guloso::getCapSv(){
 void Guloso::setCapSvVector(vector<int>& CapSv){
     this->CapSv = CapSv;
 }
+
 
 
