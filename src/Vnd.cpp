@@ -9,6 +9,7 @@ Vnd::~Vnd(){
 
 
 void Vnd::Run(Guloso* Guloso, InstanceReader* InstanceReader){
+    //auto t1 = chrono::high_resolution_clock::now();
     int k = 1;
     int custotal = Guloso->getCustoTotal();
 
@@ -31,7 +32,10 @@ void Vnd::Run(Guloso* Guloso, InstanceReader* InstanceReader){
             k += 1;
         }
     }
-    
+    //auto t2 = chrono::high_resolution_clock::now();
+    //auto duration = chrono::duration_cast<chrono::nanoseconds>( t2 - t1 ).count();
+
+    //cout << duration << endl;
 }
 
 void Vnd::playILS(Guloso* guloso, InstanceReader* reader){

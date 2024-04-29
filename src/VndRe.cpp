@@ -13,13 +13,14 @@ void VndRe::VNDReInsertion(Guloso* guloso, InstanceReader* reader){
     int job, improvement;
     int bestImprovement = guloso->getCustoTotal();
     pair<int, int> bestServidor;
-    pair<int, int> bestJob;
+    pair<int, int> bestJob; // Guarda o JOb e o seu Indice
     int newCap_1, newCap_2;
 
     while (aux < guloso->getAlocacao().size()){
         for (int job1Index = 0; job1Index < guloso->getAlocacao()[aux].size(); ++job1Index)
         {
             job = guloso->getAlocacao()[aux][job1Index];
+            // verifica se a troca é permitida
             for (int servidorIndex = 0; servidorIndex < guloso->getAlocacao().size() - 1; ++servidorIndex){
                 if (servidorIndex == aux ){
                     continue;
@@ -48,9 +49,10 @@ void VndRe::VNDReInsertion(Guloso* guloso, InstanceReader* reader){
     }
 
     if(bestImprovement < guloso->getCustoTotal()){
+        // realiza a busca na linha do job e retira o job da linha
         guloso->alocacao[bestServidor.first].erase(guloso->alocacao
                 [bestServidor.first].begin() + bestJob.first);
-
+        // Aloca o job retirado na nova linha;
         guloso->alocacao[bestServidor.second].push_back(bestJob.second);
         
         int calculeLocal = guloso->getAlocacao().back().size() * 1000;
