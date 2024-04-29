@@ -181,4 +181,8 @@ vector<int> Guloso::getCapSv(){
     return this->CapSv;
 }
 
+void Guloso::setCapSvVector(vector<int>& CapSv){
+    this->CapSv = CapSv;
+}
+
 

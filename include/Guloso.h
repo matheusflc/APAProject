@@ -46,6 +46,9 @@ class Guloso{
         void setCustoTotal(int custoTotal);
         void setCustoLocal(int custoLocal);
         void setCapSv(int var, int server, int valor);
+        void setCapSvVector(vector<int>& CapSv);
+
+        
         void setCustoAlocacao(int custoAlocacao);
 
         

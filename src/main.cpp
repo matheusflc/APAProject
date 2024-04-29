@@ -4,7 +4,7 @@
 
 using namespace std;
 
-#define ILSPLAY 0
+#define ILSPLAY 1
 
 
 int main(){
@@ -13,7 +13,7 @@ int main(){
     Vnd vnd;
     guloso.printar();
     srand(static_cast<unsigned int>(time(NULL)));
-    string nomearquivo = "n25m5A";
+    string nomearquivo = "n60m10A";
 
     if(reader.readInstance("instancias_projeto/" + nomearquivo + ".txt")){
         reader.printInstance();
@@ -28,7 +28,7 @@ int main(){
         nomearquivo = "ILS_" + nomearquivo;
     }
     
-    guloso.escreverResultadoEmArquivo(&guloso, "instancias_projeto/" + nomearquivo + "_Result.txt");
+    guloso.escreverResultadoEmArquivo(&guloso, "resultados_instancias/" + nomearquivo + "_Result.txt");
 
     
     cout << "Capacidade dos servidores após a execução:" << endl;

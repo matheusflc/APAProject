@@ -15,15 +15,15 @@ void Vnd::Run(Guloso* Guloso, InstanceReader* InstanceReader){
     while (k <= 3)
     {
         if (k == 1){
-            cout << "Entrou no Swap" << endl;
+            //cout << "Entrou no Swap" << endl;
             VNDswap(Guloso, InstanceReader);
             /*chamar swap*/
         }else if (k == 2){
-            cout << "Entrou no 2opt" << endl;
+            //cout << "Entrou no 2opt" << endl;
             VND2opt(Guloso, InstanceReader);
             /*chamar 2-pot*/
         }else{
-            cout << "Entrou no Re insertion" << endl;
+            //cout << "Entrou no Re insertion" << endl;
             VNDReInsertion(Guloso, InstanceReader);
             /*chamar re-insertion*/
         }
@@ -164,7 +164,7 @@ void Vnd::VNDswap(Guloso* guloso, InstanceReader* reader) {
         }
 
     } else {
-        cout << "Nenhuma melhoria encontrada através do método swap." << endl;
+        //cout << "Nenhuma melhoria encontrada através do método swap." << endl;
     }
 
 }
@@ -236,7 +236,7 @@ void Vnd::VND2opt(Guloso* guloso, InstanceReader* reader) {
         }
 
     }else{
-        cout << "Nenhuma melhoria encontrada através do método 2opt." << endl;
+        //cout << "Nenhuma melhoria encontrada através do método 2opt." << endl;
     }
 
 }
@@ -440,24 +440,31 @@ void Vnd::VNDReInsertion(Guloso* guloso, InstanceReader* reader){
         }
 
     }else{
-        cout << "Nenhuma melhoria encontrada através do método Re insertion." << endl;
+        //cout << "Nenhuma melhoria encontrada através do método Re insertion." << endl;
     }
 }
 
 
 
 void Vnd::playILS(Guloso* guloso, InstanceReader* reader){
-    int iteracoes = 15;
+    int iteracoes = 5000;
     Guloso melhorGuloso = *guloso;
-    cout << "rodouils" << endl;
+    vector<int> CapsSvOriginal = guloso->getCapSv();
+    int custoAlocacaoOriginal = guloso->getCustoAlocacao();
+    int custoLocalOriginal = guloso->getCustoLocal();
+    // Cria uma cópia temporária do objeto guloso para aplicar a solução perturbada
+    Guloso gulosoTemp = *guloso;
+    
+
 
      while(iteracoes--){
+        //guloso->setCapSvVector(CapsSvOriginal);
+        // guloso->setCustoAlocacao(custoAlocacaoOriginal);
+
         
         // Cria uma nova solução perturbada a partir da solução atual
-        vector<vector<int>> solucaoPerturbada = ILSPerturbation(guloso, reader);
+        vector<vector<int>> solucaoPerturbada = ILSPerturbation(&gulosoTemp, reader);
         
-        // Cria uma cópia temporária do objeto guloso para aplicar a solução perturbada
-        Guloso gulosoTemp = *guloso;
         gulosoTemp.setAlocacao(solucaoPerturbada);
         
         // Aplica o VND na solução perturbada
@@ -477,21 +484,22 @@ void Vnd::playILS(Guloso* guloso, InstanceReader* reader){
     }
 
     // Saída dos resultados da melhor solução
-    cout << guloso->getCustoTotal() << endl;
-    cout << guloso->getCustoAlocacao() << endl;
-    cout << guloso->getCustoLocal() << endl;
+    // cout << guloso->getCustoTotal() << endl;
+    // cout << guloso->getCustoAlocacao() << endl;
+    // cout << guloso->getCustoLocal() << endl;
 
-    for (int s = 0; s <= reader->m; ++s) {
-        //cout << "< lista de jobs alocados no servidor " << s + 1 << ">" << endl;
-        for (int jobId : guloso->alocacao[s]) {
-            cout << jobId << " "; // +1 para ajustar a indexação base-0 para uma apresentação mais intuitiva
-        }
-        cout << endl;
-    }
+    // for (int s = 0; s <= reader->m; ++s) {
+    //     //cout << "< lista de jobs alocados no servidor " << s + 1 << ">" << endl;
+    //     for (int jobId : guloso->alocacao[s]) {
+    //         cout << jobId << " "; // +1 para ajustar a indexação base-0 para uma apresentação mais intuitiva
+    //     }
+    //     cout << endl;
+    // }
 }
 
 vector<vector<int>> Vnd::ILSPerturbation(Guloso* guloso, InstanceReader* reader) {
-    usleep(500);
+    //usleep(500);
+    bool pertubacao = false;
     
     int m = reader->m; // Número de servidores
     vector<vector<int>> novaAlocacao = guloso->getAlocacao();
@@ -515,10 +523,6 @@ vector<vector<int>> Vnd::ILSPerturbation(Guloso* guloso, InstanceReader* reader)
         servidor2 = rand() % m;
     }
 
-    cout << "servidor 1: " << servidor1 << endl;
-    cout << "servidor 2: " << servidor2 << endl;
-
-    
     
     
 
@@ -531,27 +535,22 @@ vector<vector<int>> Vnd::ILSPerturbation(Guloso* guloso, InstanceReader* reader)
         int job1 = novaAlocacao[servidor1][jobIndex1];
         int job2 = novaAlocacao[servidor2][jobIndex2];
 
-        cout << "job1: " << job1 << endl;
-        cout << "job2: " << job2 << endl;
-
-        cout << "M: "<< m << endl;
+        
         // Calcula o impacto da troca na capacidade dos servidores
         if(servidor1 != m){
             novaCapacidadeSv1 = guloso->getCapSv()[servidor1] - reader->t[servidor1][job1] + reader->t[servidor1][job2];
-            cout << "capacidadesv1: " << guloso->getCapSv()[servidor1] << endl;
-            cout << "novaCapacidadesv1: " << novaCapacidadeSv1 << endl;
+            
         }
 
         if(servidor2 != m){
             novaCapacidadeSv2 = guloso->getCapSv()[servidor2] - reader->t[servidor2][job2] + reader->t[servidor2][job1];
-            cout << "capacidadesv2: " << guloso->getCapSv()[servidor2] << endl;
-            cout << "novaCapacidadesv1: " << novaCapacidadeSv2 << endl;
         }
 
         
 
         // Verifica se a troca respeita a capacidade dos servidores
         if (servidor2 == m && novaCapacidadeSv1 <= reader->b[servidor1]) {
+            
             
             // Realiza o swap
             swap(novaAlocacao[servidor1][jobIndex1], novaAlocacao[servidor2][jobIndex2]);
@@ -576,7 +575,12 @@ vector<vector<int>> Vnd::ILSPerturbation(Guloso* guloso, InstanceReader* reader)
             // Recalcula o custo total após a perturbação
             custoTotal = guloso->getCustoAlocacao() + guloso->getCustoLocal();
             guloso->setCustoTotal(custoTotal);
+            
+            pertubacao = true;
+
         }else if(servidor1 == m && novaCapacidadeSv2 <= reader->b[servidor2]){
+            
+            
             
             // Realiza o swap
             swap(novaAlocacao[servidor1][jobIndex1], novaAlocacao[servidor2][jobIndex2]);
@@ -602,6 +606,9 @@ vector<vector<int>> Vnd::ILSPerturbation(Guloso* guloso, InstanceReader* reader)
             // Recalcula o custo total após a perturbação
             custoTotal = guloso->getCustoAlocacao() + guloso->getCustoLocal();
             guloso->setCustoTotal(custoTotal);
+            
+            pertubacao = true;
+
         }else if(!local && novaCapacidadeSv2 <= reader->b[servidor2] && novaCapacidadeSv1 <= reader->b[servidor1]){
             
             // Realiza o swap
@@ -629,24 +636,27 @@ vector<vector<int>> Vnd::ILSPerturbation(Guloso* guloso, InstanceReader* reader)
             // Recalcula o custo total após a perturbação
             custoTotal = guloso->getCustoAlocacao() + guloso->getCustoLocal();
             guloso->setCustoTotal(custoTotal);
+            
+            pertubacao = true;
 
         }
     }
 // Saída dos resultados
-    cout << "Pertubacao feita" << endl;
-    cout << guloso->getCustoTotal() << endl;
-    cout << guloso->getCustoAlocacao() << endl;
-    cout << guloso->getCustoLocal() << endl;
-    
+    if(false){
+        cout << guloso->getCustoTotal() << endl;
+        cout << guloso->getCustoAlocacao() << endl;
+        cout << guloso->getCustoLocal() << endl;
+        
 
-    for (int s = 0; s <= novaAlocacao.size(); ++s) {
-        //cout << "< lista de jobs alocados no servidor " << s + 1 << ">" << endl;
-        for (int jobId : novaAlocacao[s]) {
-            cout << jobId << " "; // +1 para ajustar a indexação base-0 para uma apresentação mais intuitiva
+        for (int s = 0; s <= m; ++s) {
+            //cout << "< lista de jobs alocados no servidor " << s + 1 << ">" << endl;
+            for (int jobId : novaAlocacao[s]) {
+                cout << jobId << " "; // +1 para ajustar a indexação base-0 para uma apresentação mais intuitiva
+            }
+            cout << endl;
         }
-        cout << endl;
     }
-    cout << "aaaaaaaaaaa" << endl;
+    
     return novaAlocacao;
 
 }
